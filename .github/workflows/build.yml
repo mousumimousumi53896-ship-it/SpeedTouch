@@ -17,6 +17,29 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build Info
-        run: echo "Repository link registered successfully. Project ready for compilation steps."
-        
+      - name: Create Android Project Structure
+        run: |
+          mkdir -p app/src/main/java/com/speedtouch/clicker
+          mkdir -p app/src/main
+          echo 'apply plugin: "com.android.application"' > app/build.gradle
+          echo 'android { compileSdk 33; defaultConfig { applicationId "com.speedtouch.clicker"; minSdk 24; targetSdk 33; versionCode 1; versionName "1.0"; } }' >> app/build.gradle
+          echo 'include ":app"' > settings.gradle
+
+      - name: Move MainActivity
+        run: |
+          mv MainActivity.java app/src/main/java/com/speedtouch/clicker/
+
+      - name: Make Gradle Wrapper Executable
+        run: |
+          gradle wrapper --gradle-version 8.0
+          chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: SpeedTouch-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          
