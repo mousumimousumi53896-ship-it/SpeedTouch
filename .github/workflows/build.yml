@@ -17,26 +17,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK & Project
+      - name: Create Project Structure
         run: |
           mkdir -p app/src/main/java/com/speedtouch/clicker
           echo 'apply plugin: "com.android.application"' > app/build.gradle
           echo 'android { compileSdk 33; defaultConfig { applicationId "com.speedtouch.clicker"; minSdk 24; targetSdk 33; versionCode 1; versionName "1.0"; } }' >> app/build.gradle
           echo 'include ":app"' > settings.gradle
-          echo 'rootProject.name = "SpeedTouch"' >> settings.gradle
 
-      - name: Move Source File
-        run: |
-          mv MainActivity.java app/src/main/java/com/speedtouch/clicker/
-
-      - name: Create Gradle Wrapper
-        run: |
-          gradle wrapper --gradle-version 8.0
+      - name: Move MainActivity
+        run: mv MainActivity.java app/src/main/java/com/speedtouch/clicker/
 
       - name: Build APK
-        run: ./gradlew assembleDebug
+        run: |
+          gradle wrapper --gradle-version 8.0
+          ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v3
         with:
           name: app-debug
