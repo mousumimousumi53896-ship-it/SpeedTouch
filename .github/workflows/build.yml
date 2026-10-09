@@ -9,19 +9,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Create Project Structure
+      - name: Create Project Structure & Gradle Files
         run: |
           mkdir -p app/src/main/java/com/speedtouch/clicker
+          
+          # Root build.gradle with Google and Maven Central repositories
+          echo 'buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.1.0" } }' > build.gradle
+          echo 'allprojects { repositories { google(); mavenCentral() } }' >> build.gradle
+
+          # App level build.gradle
           echo 'apply plugin: "com.android.application"' > app/build.gradle
           echo 'android { compileSdk 33; defaultConfig { applicationId "com.speedtouch.clicker"; minSdk 24; targetSdk 33; versionCode 1; versionName "1.0"; } }' >> app/build.gradle
+
+          # Settings.gradle
           echo 'include ":app"' > settings.gradle
 
       - name: Move MainActivity
