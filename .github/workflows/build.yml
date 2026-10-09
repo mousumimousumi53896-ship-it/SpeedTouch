@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -21,7 +21,7 @@ jobs:
         run: |
           mkdir -p app/src/main/java/com/speedtouch/clicker
           
-          # Root build.gradle with Google and Maven Central repositories
+          # Root build.gradle with proper repositories and AGP classpath
           echo 'buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.1.0" } }' > build.gradle
           echo 'allprojects { repositories { google(); mavenCentral() } }' >> build.gradle
 
