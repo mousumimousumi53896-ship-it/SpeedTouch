@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Java App
 
 on:
   push:
@@ -17,54 +17,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Project Structure and Gradle Files
+      - name: Compile Java Code
         run: |
-          mkdir -p app/src/main/java/com/speedtouch/clicker
-          
-          # Root settings.gradle
-          echo 'include ":app"' > settings.gradle
-          
-          # Root build.gradle
-          echo 'buildscript {' > build.gradle
-          echo '    repositories {' > build.gradle
-          echo '        google()' > build.gradle
-          echo '        mavenCentral()' > build.gradle
-          echo '    }' > build.gradle
-          echo '    dependencies {' > build.gradle
-          echo '        classpath "com.android.tools.build:gradle:7.4.2"' > build.gradle
-          echo '    }' > build.gradle
-          echo '}' > build.gradle
-          echo 'allprojects {' > build.gradle
-          echo '    repositories {' > build.gradle
-          echo '        google()' > build.gradle
-          echo '        mavenCentral()' > build.gradle
-          echo '    }' > build.gradle
-          echo '}' > build.gradle
+          mkdir -p build/classes
+          javac MainActivity.java -d build/classes
 
-          # App level build.gradle
-          echo 'apply plugin: "com.android.application"' > app/build.gradle
-          echo 'android {' > app/build.gradle
-          echo '    compileSdk 33' > app/build.gradle
-          echo '    defaultConfig {' > app/build.gradle
-          echo '        applicationId "com.speedtouch.clicker"' > app/build.gradle
-          echo '        minSdk 24' > app/build.gradle
-          echo '        targetSdk 33' > app/build.gradle
-          echo '        versionCode 1' > app/build.gradle
-          echo '        versionName "1.0"' > app/build.gradle
-          echo '    }' > app/build.gradle
-          echo '}' > app/build.gradle
-
-      - name: Move MainActivity
-        run: mv MainActivity.java app/src/main/java/com/speedtouch/clicker/
-
-      - name: Build APK
+      - name: Create JAR File
         run: |
-          gradle wrapper --gradle-version 7.5
-          ./gradlew assembleDebug
+          cd build/classes
+          jar cfe ../SpeedTouch.jar MainActivity .
 
-      - name: Upload APK Artifact
+      - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: speedtouch-jar
+          path: build/SpeedTouch.jar
           
