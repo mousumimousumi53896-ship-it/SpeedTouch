@@ -17,27 +17,49 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Create Project Structure & Gradle Files
+      - name: Setup Project Structure and Gradle Files
         run: |
           mkdir -p app/src/main/java/com/speedtouch/clicker
           
-          # Root build.gradle with proper repositories and AGP classpath
-          echo 'buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.1.0" } }' > build.gradle
-          echo 'allprojects { repositories { google(); mavenCentral() } }' >> build.gradle
+          # Root settings.gradle
+          echo 'include ":app"' > settings.gradle
+          
+          # Root build.gradle
+          echo 'buildscript {' > build.gradle
+          echo '    repositories {' > build.gradle
+          echo '        google()' > build.gradle
+          echo '        mavenCentral()' > build.gradle
+          echo '    }' > build.gradle
+          echo '    dependencies {' > build.gradle
+          echo '        classpath "com.android.tools.build:gradle:7.4.2"' > build.gradle
+          echo '    }' > build.gradle
+          echo '}' > build.gradle
+          echo 'allprojects {' > build.gradle
+          echo '    repositories {' > build.gradle
+          echo '        google()' > build.gradle
+          echo '        mavenCentral()' > build.gradle
+          echo '    }' > build.gradle
+          echo '}' > build.gradle
 
           # App level build.gradle
           echo 'apply plugin: "com.android.application"' > app/build.gradle
-          echo 'android { compileSdk 33; defaultConfig { applicationId "com.speedtouch.clicker"; minSdk 24; targetSdk 33; versionCode 1; versionName "1.0"; } }' >> app/build.gradle
-
-          # Settings.gradle
-          echo 'include ":app"' > settings.gradle
+          echo 'android {' > app/build.gradle
+          echo '    compileSdk 33' > app/build.gradle
+          echo '    defaultConfig {' > app/build.gradle
+          echo '        applicationId "com.speedtouch.clicker"' > app/build.gradle
+          echo '        minSdk 24' > app/build.gradle
+          echo '        targetSdk 33' > app/build.gradle
+          echo '        versionCode 1' > app/build.gradle
+          echo '        versionName "1.0"' > app/build.gradle
+          echo '    }' > app/build.gradle
+          echo '}' > app/build.gradle
 
       - name: Move MainActivity
         run: mv MainActivity.java app/src/main/java/com/speedtouch/clicker/
 
       - name: Build APK
         run: |
-          gradle wrapper --gradle-version 8.0
+          gradle wrapper --gradle-version 7.5
           ./gradlew assembleDebug
 
       - name: Upload APK Artifact
